@@ -64,3 +64,5 @@ Next step is to update the viewer certificate resource on our cloudfront main.tf
   ![SSL and cloudfront link confirmation success](/terraform_assignment_images/completion_terminal.PNG)
 
   ![SSL and cloudfront link confirmation on console](/terraform_assignment_images/completion_console.PNG)
+
+The domain is not ready yet as it takes 48 hours for it for be activated. Maybe when it does it will updated with the picture. 
