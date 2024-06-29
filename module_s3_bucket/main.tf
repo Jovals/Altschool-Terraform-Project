@@ -34,29 +34,33 @@ resource "aws_s3_bucket_public_access_block" "jovals-bucket-12345" {
   restrict_public_buckets = true
 }
 
-# S3 Bucket Lifecycle Configuration
-resource "aws_s3_bucket_lifecycle_configuration" "kene_bucket-12345" {
-  bucket = aws_s3_bucket.jovals-bucket-12345.id
+# # S3 Bucket Lifecycle Configuration
+# resource "aws_s3_bucket_lifecycle_configuration" "kene_bucket-12345" {
+#   bucket = aws_s3_bucket.jovals-bucket-12345.id
 
-  rule {
-    id     = "log-expiration"
-    status = "Enabled"
+#   rule {
+#     id     = "log-expiration"
+#     status = "Enabled"
 
-    filter {
-      prefix = "log/"
-    }
+#     filter {
+#       prefix = "log/"
+#     }
 
-    transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
-    }
+#     transition {
+#       days          = 30
+#       storage_class = "STANDARD_IA"
+#     }
 
-    transition {
-      days          = 180
-      storage_class = "GLACIER"
-    }
-  }
-}
+#     transition {
+#       days          = 180
+#       storage_class = "GLACIER"
+#     }
+#   }
+
+# }
+
+# Uploading files to S3 Bucket
+
 resource "aws_s3_object" "Terraform_Ass_Website" {
   for_each    = fileset("module_s3_bucket/Terraform_Ass_Website/", "**/*.*")
   bucket      = aws_s3_bucket.jovals-bucket-12345.bucket
@@ -66,26 +70,26 @@ resource "aws_s3_object" "Terraform_Ass_Website" {
 }
 
 # S3 Bucket Policy
-resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
-  bucket = aws_s3_bucket.jovals-bucket-12345.id
-  policy = data.aws_iam_policy_document.allow_access_from_another_account.json
-}
+# resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
+#   bucket = aws_s3_bucket.jovals-bucket-12345.id
+#   policy = data.aws_iam_policy_document.allow_access_from_another_account.json
+# }
 
-data "aws_iam_policy_document" "allow_access_from_another_account" {
-  statement {
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
+# data "aws_iam_policy_document" "allow_access_from_another_account" {
+#   statement {
+#     principals {
+#       type        = "AWS"
+#       identifiers = ["*"]
+#     }
 
-    actions = [
-      "s3:GetObject",
-      "s3:ListBucket",
-    ]
+#     actions = [
+#       "s3:GetObject",
+#       "s3:ListBucket",
+#     ]
 
-    resources = [
-      aws_s3_bucket.jovals-bucket-12345.arn,
-      "${aws_s3_bucket.jovals-bucket-12345.arn}/*",
-    ]
-  }
-}
+#     resources = [
+#       aws_s3_bucket.jovals-bucket-12345.arn,
+#       "${aws_s3_bucket.jovals-bucket-12345.arn}/*",
+#     ]
+#   }
+# }

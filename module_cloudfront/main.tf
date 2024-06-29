@@ -7,7 +7,7 @@
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name = var.aws_s3_bucket.bucket_regional_domain_name
+    domain_name = var.aws_s3_bucket_name.bucket_regional_domain_name
     origin_id   = "s3-jovals-bucket-12345"
 
     s3_origin_config {
@@ -19,7 +19,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
- # aliases = ["www.example.com"]  # Replace with your domain name
+ aliases = ["www.jovals.me"] 
 
   default_cache_behavior {
     allowed_methods  =  ["GET", "HEAD"]
@@ -41,10 +41,10 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   viewer_certificate {
-    # acm_certificate_arn =  var.acm_certificate_arn
-    # ssl_support_method = "sni-only"
-    # minimum_protocol_version = "TLSv1.2_2021"
-    cloudfront_default_certificate = true
+    acm_certificate_arn =  var.acm_certificate
+    ssl_support_method = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+    #  cloudfront_default_certificate = true
   }
 
   restrictions {
@@ -60,7 +60,7 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 
 #  Attach bucket policy to allow CloudFront access
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = var.aws_s3_bucket.id
+  bucket = var.aws_s3_bucket_name.id
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -73,7 +73,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
         Action = "s3:GetObject"
       Resource = [
 
-        "${var.aws_s3_bucket.arn}/*"
+        "${var.aws_s3_bucket_name.arn}/*"
         ]
       }
     ]

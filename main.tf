@@ -1,6 +1,6 @@
 # Creating/Running the AWS bucket module
 module "aws_s3_bucket" {
-  source= "./module_s3_bucket"
+  source="./module_s3_bucket"
   aws_s3_bucket = var.aws_s3_bucket
   origin_id = ""
 }
@@ -8,21 +8,37 @@ module "aws_s3_bucket" {
 # Creating Cloudfront distribution
 module "aws_cloudfront" {
   source="./module_cloudfront"
-  aws_s3_bucket = module.aws_s3_bucket.aws_s3_bucket
-  certificate_arn = "default"
-  origin_id = "s3-jovals-bucket-12345"
+  aws_s3_bucket_name = module.aws_s3_bucket.aws_s3_bucket
+  origin_id = module.aws_s3_bucket.origin_id
+  domain_name = var.domain_name
+  aws_s3_bucket_domain_name = module.aws_s3_bucket.bucket_domain_name
+  acm_certificate = module.certificate.acm_certificate.arn
 }
-# module "route53" {
-#   source = "./modules/route53"
-#   domain-name = var.domain-name
-#   env = var.env
-#   cloudfront_domain_name = module.aws_cloudfront.aws_cloudfront.domain_name
-#   cloudfront_hosted_zone_id = module.aws_cloudfront.aws_cloudfront.hosted_zone_id
-  
-# }
+# Creating Route53 module
+module "route53" {
+  source = "./module_Route53"
+  domain_name = var.domain_name
+  cloudfront_domain_name =  module.aws_cloudfront.domain_name
+  cloudfront_hosted_zone_id =  module.aws_cloudfront.zone_id
+  # 
+  env = var.env
+}
+
+# Creating Certificate module
+module "certificate" {
+  source = "./module_certificate"
+  domain_name = var.domain_name
+  aws_route53_zone_id = module.route53.module_Route53.zone_id
+
+}
+
+
+
+
+
 
 # module "certificate" {
-#   source = "./modules/certificate"
-#   domain-name = var.domain-name
-#   aws_route53_zone_id=module.route53.route53.zone_id
+#   source = "./module_certificate"
+#   domain_name = var.domain_name
+#   validation_record_fqdns = module.route53.validation_record_fqdns
 # }

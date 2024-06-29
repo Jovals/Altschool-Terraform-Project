@@ -8,3 +8,5 @@
 #ignore terraform folder that contains provider
 .terraform/*
 
+#ignore terraform folder that contains provider
+provider.tf
